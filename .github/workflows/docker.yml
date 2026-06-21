@@ -1,30 +1,36 @@
-
-
 name: AllergyLab CI/CD
-services:
-  app:
-    build: ./app
 
-  db-loader:
-    build: ./db-loader
-
-  email:
-    build: ./email
 on:
-  push:
+push:
+branches:
+- main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build-and-push:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Checkout source
+    uses: actions/checkout@v4
 
-      - name: Build images
-        run: |
-          cd Part7a
+  - name: Log in to Docker Hub
+    uses: docker/login-action@v3
+    with:
+      username: ${{ secrets.DOCKER_USERNAME }}
+      password: ${{ secrets.DOCKER_PASSWORD }}
 
-          docker build -t ${{ secrets.UMUOKOROUBA }}/al-app:latest ./app
-          docker build -t ${{ secrets.UMUOKOROUBA }}/al-db-loader:latest ./db-loader
-          docker build -t ${{ secrets.UMUOKOROUBA }}/al-email:latest ./email
+  - name: Build Docker images
+    run: |
+      cd Part7a
+
+      docker build -t ${{ secrets.DOCKER_USERNAME }}/al-app:latest ./app
+      docker build -t ${{ secrets.DOCKER_USERNAME }}/al-db-loader:latest ./db-loader
+      docker build -t ${{ secrets.DOCKER_USERNAME }}/al-email:latest ./email
+
+  - name: Push Docker images
+    run: |
+      docker push ${{ secrets.DOCKER_USERNAME }}/al-app:latest
+      docker push ${{ secrets.DOCKER_USERNAME }}/al-db-loader:latest
+      docker push ${{ secrets.DOCKER_USERNAME }}/al-email:latest
+```
