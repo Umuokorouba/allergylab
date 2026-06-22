@@ -1,33 +1,35 @@
 name: AllergyLab CI/CD
+
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+          - main
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
+    build-and-push:
+      runs-on: ubuntu-latest
 
       steps:
-       - name: Checkout repository
-       uses: actions/checkout@v4
+        - name: Checkout repository
+          uses: actions/checkout@v4
 
-       - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-    with:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+        - name: Log in to Docker Hub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Display repository structure
-    run: |
-      pwd
-      ls -la
-      find . -type d | sort
+        - name: Display repository structure
+          run: |
+            pwd
+            ls -la
+            find . -type d | sort
 
-       - name: Build Docker image
-    run: |
-      docker build -t ${{ secrets.DOCKER_USERNAME }}/allergylab:latest .
+        - name: Build Docker image
+          run: |
+            docker build -t ${{ secrets.DOCKER_USERNAME }}/allergylab:latest .
 
-      - name: Push Docker image
-    run: |
-      docker push ${{ secrets.DOCKER_USERNAME }}/allergylab:latest
+        - name: Push Docker image
+          run: |
+            docker push ${{ secrets.DOCKER_USERNAME }}/allergylab:latest
+
